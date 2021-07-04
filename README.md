@@ -12,6 +12,10 @@ You can drag it around and let it go to let it bounce more.
 * `hu.yijun.gdxtest.multiscreen` **MultiGame.** A (smaller) ball that moves around the screen and
 bounces off the edges. Uses multiple screens, and so there is a title screen which is 
   pretty self explanatory.
+* `hu.yijun.gdxtest.camerathing` **CameraThing.** Literally four squares and a camera that can be moved
+with WASD, and zoomed and rotated with arrow keys. 
+* `hu.yijun.gdxtest.slider` **Colours.** Same as the program as in the `Adrakaris/Small` repository, it has
+three slider bars that you can slide (for RGB), and it'll change the colour of the background.
 
 ## Use
 
@@ -31,7 +35,7 @@ corresponding run configuration window. Set it like so.
 Go to `desktop/src/.../DesktopLauncher.java` and change this specific line:
 
 ```java
-new LwjglApplication(new MultiGame(), config);
+new LwjglApplication(new Colours(), config);
 ```
 
-where it says `MultiGame`, change that to the class name you want it to be.
+where it says `Colours`, change that to the class name you want it to be.
