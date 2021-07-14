@@ -27,11 +27,10 @@ public class ToggleButton extends AbstractButton<MainGame> {
 
 	@Override
 	public void update() {
-		if (Gdx.input.isTouched()) {
+		if (Gdx.input.justTouched()) {
+//			System.out.println(Gdx.input.getX() + " X/Y " + Gdx.input.getY());
 			if (bounding.contains(Gdx.input.getX(), game.HEIGHT - Gdx.input.getY())) {
-				isToggle = true;
-			} else {
-				isToggle = false;
+				isToggle = !isToggle;
 			}
 		}
 	}
@@ -50,20 +49,6 @@ public class ToggleButton extends AbstractButton<MainGame> {
 	@Override
 	public void dispose() {
 
-	}
-
-	private void adjust(boolean up) {
-		if (up) {
-			x -= 2;
-			y -= 2;
-			w += 4;
-			h += 4;
-		} else {
-			x += 2;
-			y += 2;
-			w -= 4;
-			h -= 4;
-		}
 	}
 
 	public boolean isToggle() {
