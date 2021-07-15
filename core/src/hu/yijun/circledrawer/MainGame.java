@@ -4,7 +4,6 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -13,6 +12,10 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import hu.yijun.circledrawer.buttons.ToggleButton;
+
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.function.Function;
 
 public class MainGame extends ApplicationAdapter {
 
@@ -23,6 +26,8 @@ public class MainGame extends ApplicationAdapter {
 	public final float WIDTH = 960;
 	public final float HEIGHT = 540;
 
+	private BitmapFont debugFont;
+
 	private OrthographicCamera camera;
 	private Viewport viewport;
 	private ToggleButton[] buttons;
@@ -32,6 +37,9 @@ public class MainGame extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		futura20 = getFont("fonts/futuramd.ttf", 20);
 		shapeRenderer = new ShapeRenderer();
+
+		debugFont = new BitmapFont();
+		debugFont.setColor(new Color(0,0,0,1));
 
 		camera = new OrthographicCamera(WIDTH, HEIGHT);
 		camera.position.set(WIDTH/2, HEIGHT/2, 0);
@@ -62,14 +70,23 @@ public class MainGame extends ApplicationAdapter {
 		ScreenUtils.clear(1, 1, 1, 1);
 		shapeRenderer.setProjectionMatrix(camera.combined);
 
+		// RENDER
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 		for (ToggleButton b : buttons) {
 			b.drawRender();
 		}
 		shapeRenderer.end();
 
-		// batch.begin();
-		// batch.end();
+		// BATCH
+		batch.begin();
+
+		Boolean[] values = new Boolean[4];
+		for (int i = 0; i < 4; i++) {
+			values [i] = buttons[i].isToggle();
+		}
+		debugFont.draw(batch, MessageFormat.format("Button values: {0} {1} {2} {3}", values), 20, HEIGHT-20);
+
+		batch.end();
 	}
 	
 	@Override
