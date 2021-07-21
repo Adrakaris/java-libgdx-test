@@ -2,7 +2,6 @@ package hu.yijun.circledrawer.buttons;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Rectangle;
 import hu.yijun.circledrawer.MainGame;
 
 public class ToggleButton extends AbstractButton<MainGame> {
@@ -10,7 +9,7 @@ public class ToggleButton extends AbstractButton<MainGame> {
 	private boolean isToggle;
 
 	/**
-	 * A rectangular button that has a toggle
+	 * A rectangular button that has a toggle feature.
 	 *
 	 * @param game Game class
 	 * @param x x loc of button

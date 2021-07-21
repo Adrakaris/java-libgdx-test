@@ -84,6 +84,7 @@ public class MainGame extends ApplicationAdapter {
 		for (int i = 0; i < 4; i++) {
 			values [i] = buttons[i].isToggle();
 		}
+		debugFont.setColor(0,0,0,1);
 		debugFont.draw(batch, MessageFormat.format("Button values: {0} {1} {2} {3}", values), 20, HEIGHT-20);
 
 		batch.end();
@@ -105,7 +106,7 @@ public class MainGame extends ApplicationAdapter {
 		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(path));
 		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
 		parameter.size = size;
-		parameter.color = new Color(0,0,0,1);
+		parameter.color = new Color(1,1,1,1);
 		BitmapFont f = generator.generateFont(parameter);
 		generator.dispose();
 		return f;

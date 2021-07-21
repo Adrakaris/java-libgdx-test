@@ -8,7 +8,8 @@ import com.badlogic.gdx.math.Rectangle;
  * An abstract button class that can be extended and used in libGDX projects
  *
  * @param <Game> The main ApplicationAdapter game class in the project - please <i>specify</i> this when extending so
- *              your class isn't genericised.
+ *              your class isn't genericised. For example: <code>public class Button extends AbstractButton&lt;GDXGame&gt;</code>,
+ *              where your main game class is <code>GDXGame</code>
  */
 public abstract class AbstractButton<Game extends ApplicationAdapter> {
 
@@ -22,7 +23,17 @@ public abstract class AbstractButton<Game extends ApplicationAdapter> {
 	protected Color onCol;
 	protected Rectangle bounding;
 
-	/** A rectangular button */
+	/**
+	 * An abstract base class for a rectangular button.
+	 *
+	 * @param game The game that the button belongs to
+	 * @param x x position
+	 * @param y y position
+	 * @param w width
+	 * @param h height
+	 * @param off off colour
+	 * @param on on colour
+	 */
 	public AbstractButton(Game game, float x, float y, float w, float h, Color off, Color on) {
 		this.game = game;
 		this.x = x;
