@@ -2,14 +2,14 @@ package adrakaris.threedtest;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.loaders.ModelLoader;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.graphics.g3d.utils.TextureProvider;
 
 public class ThreeDGame extends ApplicationAdapter {
 
@@ -24,10 +24,15 @@ public class ThreeDGame extends ApplicationAdapter {
 	@Override
 	public void create() {
 		modelBatch = new ModelBatch();
+		// evn
+		environment = new Environment();
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .4f, .4f, .4f, 1));
+		environment.add(new DirectionalLight().set(.8f, .8f, .8f, -1, -.8f, -.2f));
+
 
 		// setup camera
 		camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		camera.position.set(10, 10, 10);
+		camera.position.set(5, 5, 5);
 		camera.lookAt(0,0,0);
 		camera.near = 1;
 		camera.far = 300;
@@ -36,19 +41,9 @@ public class ThreeDGame extends ApplicationAdapter {
 		camController = new CameraInputController(camera);
 		Gdx.input.setInputProcessor(camController);
 
-		// evn
-		environment = new Environment();
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .4f, .4f, .4f, 1));
-		environment.add(new DirectionalLight().set(.8f, .8f, .8f, -1, -.8f, -.2f));
-
-
-
-		// cube
-		ModelBuilder modelBuilder = new ModelBuilder();
-		model = modelBuilder.createBox(
-				5,5,5,
-				new Material(ColorAttribute.createDiffuse(Color.GREEN)),
-				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+		// custom obj (aint fully support)
+		ModelLoader<ObjLoader.ObjLoaderParameters> loader = new ObjLoader();
+		model = loader.loadModel(Gdx.files.internal("tree-1.obj"));
 
 		instance = new ModelInstance(model);
 	}
