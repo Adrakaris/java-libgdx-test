@@ -52,7 +52,8 @@ public class ShaderThing implements ApplicationListener {
         for (int x = -5; x <= 5; x += 2) {
             for (int z = -5; z <= 5; z += 2) {
                 var minst = new ModelInstance(model, x, 0, z);
-                minst.userData = new Color((x+5f)/10f, (z+5f)/10f, 0, 1);
+                var colAttr = ColorAttribute.createDiffuse((x+5f)/10f, (z+5f)/10f, 0, 1);
+                minst.materials.get(0).set(colAttr);
                 instances.add(minst);
             }
         }
