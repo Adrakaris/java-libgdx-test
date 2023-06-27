@@ -4,6 +4,7 @@ import adrakaris.threedtest.fings.TestShader;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.ModelLoader;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttributes;
@@ -50,7 +51,9 @@ public class ShaderThing implements ApplicationListener {
 
         for (int x = -5; x <= 5; x += 2) {
             for (int z = -5; z <= 5; z += 2) {
-                instances.add(new ModelInstance(model, x, 0, z));
+                var minst = new ModelInstance(model, x, 0, z);
+                minst.userData = new Color((x+5f)/10f, (z+5f)/10f, 0, 1);
+                instances.add(minst);
             }
         }
 

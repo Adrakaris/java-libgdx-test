@@ -2,10 +2,12 @@ package adrakaris.threedtest.fings;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
 import static com.badlogic.gdx.graphics.GL20.GL_BACK;
@@ -19,6 +21,7 @@ public class TestShader implements Shader {
     // uniform locs
     private int u_projViewTrans;
     private int u_worldTrans;
+    private int u_color;
 
     // right after shader creation
     @Override
@@ -31,6 +34,7 @@ public class TestShader implements Shader {
 
         u_projViewTrans =  program.getUniformLocation("u_projViewTrans");
         u_worldTrans = program.getUniformLocation("u_worldTrans");
+        u_color = program.getUniformLocation("u_color");
     }
     @Override
     public void dispose() {
@@ -54,6 +58,8 @@ public class TestShader implements Shader {
     public void render(Renderable renderable) {
         // set uniform
         program.setUniformMatrix(u_worldTrans, renderable.worldTransform);
+        Color color = (Color) renderable.userData;
+        program.setUniformf(u_color, color.r, color.g, color.b);
         // set attributes, bind and render
         renderable.meshPart.render(program);
     }
