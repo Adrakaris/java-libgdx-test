@@ -50,36 +50,35 @@ public class SceneBlocksThing implements ApplicationListener {
         Gdx.input.setInputProcessor(camController);
 
         assetManager = new AssetManager();
-        assetManager.load("space/ship.obj", Model.class);
-        assetManager.load("space/block.obj", Model.class);
-        assetManager.load("space/invader.obj", Model.class);
-        assetManager.load("space/spacesphere.obj", Model.class);
-
+        // load the entire scene
+        // by converting from an exported fbx model we can simultaneously import multiple objects
+        assetManager.load("space/invaders.g3db", Model.class);
+        // this makes loading more efficient
         loading = true;
     }
 
     private void doLoading() {
-        ship = new ModelInstance(assetManager.get("space/ship.obj", Model.class));
+        Model model = assetManager.get("space/invaders.g3db", Model.class);
+        ship = new ModelInstance(model, "ship");  // bruh moment
         ship.transform.setToRotation(Vector3.Y, 180).setTranslation(0,0,6);
         instances.add(ship);
 
-        Model blockModel = assetManager.get("space/block.obj", Model.class);
         for (float x = -5; x <= 5; x += 2) {
-            ModelInstance block = new ModelInstance(blockModel);
+            ModelInstance block = new ModelInstance(model, "block");
             block.transform.setToTranslation(x, 0, 3);
             instances.add(block);
             blocks.add(block);
         }
-        Model invaderModel = assetManager.get("space/invader.obj", Model.class);
+
         for (float x = -5; x <= 5; x += 2) {
             for (float z = -8; z <= 0; z += 2) {
-                ModelInstance invader = new ModelInstance(invaderModel);
+                ModelInstance invader = new ModelInstance(model, "invader");
                 invader.transform.setToTranslation(x,0,z);
                 instances.add(invader);
                 invaders.add(invader);
             }
         }
-        space = new ModelInstance(assetManager.get("space/spacesphere.obj", Model.class));
+        space = new ModelInstance(model, "space");
         // not added to instances because we do not want to have lighting on this "skybox"
 
         loading = false;
