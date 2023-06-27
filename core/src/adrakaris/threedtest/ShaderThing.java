@@ -17,6 +17,7 @@ import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultTextureBinder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.RenderContext;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 
 import static com.badlogic.gdx.graphics.GL20.GL_POINTS;
@@ -25,16 +26,15 @@ public class ShaderThing implements ApplicationListener {
     public PerspectiveCamera camera;
     public CameraInputController camController;
     public Shader shader;
-    public RenderContext renderContext;
     public Model model;
-    public Environment environment = null;
-    public Renderable renderable;
+    public Array<ModelInstance> instances = new Array<>();  // using libgdx array(list)
+    public ModelBatch modelBatch;
 
     @Override
     public void create() {
 
         camera = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.position.set(2,2,2);
+        camera.position.set(0,8,8);
         camera.lookAt(0,0,0);
         camera.near = 1;
         camera.far = 300;
@@ -48,20 +48,17 @@ public class ShaderThing implements ApplicationListener {
                 new Material(),
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates);
 
-        NodePart blockPart = model.nodes.get(0).parts.get(0);
+        for (int x = -5; x <= 5; x += 2) {
+            for (int z = -5; z <= 5; z += 2) {
+                instances.add(new ModelInstance(model, x, 0, z));
+            }
+        }
 
-        renderable = new Renderable();
-        blockPart.setRenderable(renderable);
-        renderable.environment = environment;
-        renderable.worldTransform.idt();
-
-//        renderable.meshPart.primitiveType = GL_POINTS;
-
-        renderContext = new RenderContext(new DefaultTextureBinder(DefaultTextureBinder.LRU, 1));
-        String vert = Gdx.files.internal("shader/test.vert").readString();
-        String frag = Gdx.files.internal("shader/test.frag").readString();
         shader = new TestShader();
         shader.init();
+
+        modelBatch = new ModelBatch();
+
     }
 
     @Override
@@ -76,11 +73,11 @@ public class ShaderThing implements ApplicationListener {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-        renderContext.begin();
-        shader.begin(camera, renderContext);
-        shader.render(renderable);
-        shader.end();
-        renderContext.end();
+        modelBatch.begin(camera);
+        for (ModelInstance instance : instances) {
+            modelBatch.render(instance, shader);
+        }
+        modelBatch.end();
 
     }
 
@@ -98,5 +95,6 @@ public class ShaderThing implements ApplicationListener {
     public void dispose() {
         shader.dispose();
         model.dispose();
+        modelBatch.dispose();
     }
 }
