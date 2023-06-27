@@ -1,5 +1,6 @@
 package adrakaris.threedtest;
 
+import adrakaris.threedtest.fings.TestShader;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.ModelLoader;
@@ -59,7 +60,7 @@ public class ShaderThing implements ApplicationListener {
         renderContext = new RenderContext(new DefaultTextureBinder(DefaultTextureBinder.LRU, 1));
         String vert = Gdx.files.internal("shader/test.vert").readString();
         String frag = Gdx.files.internal("shader/test.frag").readString();
-        shader = new DefaultShader(renderable, new DefaultShader.Config(vert, frag));
+        shader = new TestShader();
         shader.init();
     }
 
