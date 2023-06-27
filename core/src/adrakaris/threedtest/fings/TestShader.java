@@ -15,6 +15,23 @@ import static com.badlogic.gdx.graphics.GL20.GL_BACK;
 import static com.badlogic.gdx.graphics.GL20.GL_LEQUAL;
 
 public class TestShader implements Shader {
+    public static class TestColorAttribute extends  ColorAttribute {
+        public final static String DiffuseUAlias = "diffuseUColor";
+        public final static long DiffuseU = register(DiffuseUAlias);  // register these as material attributes
+        public final static String DiffuseVAlias = "diffuseVColor";
+        public final static long DiffuseV = register(DiffuseVAlias);
+
+        static {
+            Mask = Mask | DiffuseU | DiffuseV;  // make class accept those attributes
+        }
+
+
+        public TestColorAttribute(long type, float r, float g, float b, float a) {
+            super(type, r, g, b, a);
+        }
+    }
+
+
     private ShaderProgram program;
     private Camera camera;
     private RenderContext context;
@@ -67,8 +84,8 @@ public class TestShader implements Shader {
         // this fails if the colorattr doesnt have a diffuse -- in that case we can get the
         // attr first and then do an if to fallback to a color (or another shader)
         // or (see canRendeR())
-        Color colorU = ((ColorAttribute)renderable.material.get(ColorAttribute.Diffuse)).color;
-        Color colorV = Color.BLUE;
+        Color colorU = ((ColorAttribute)renderable.material.get(TestColorAttribute.DiffuseU)).color;
+        Color colorV = ((ColorAttribute)renderable.material.get(TestColorAttribute.DiffuseV)).color;
 
         program.setUniformf(u_colorU, colorU.r, colorU.g, colorU.b);
         program.setUniformf(u_colorV, colorV.r, colorV.g, colorV.b);
@@ -91,7 +108,7 @@ public class TestShader implements Shader {
     @Override
     public boolean canRender(Renderable instance) {
         // we can also enforce colorattr here
-        return instance.material.has(ColorAttribute.Diffuse);
+        return instance.material.has(TestColorAttribute.DiffuseU | TestColorAttribute.DiffuseV);
         // if not modelbatchw ill auto fall back to default shader
     }
 }
