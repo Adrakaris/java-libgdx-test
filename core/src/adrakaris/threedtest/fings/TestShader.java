@@ -22,7 +22,9 @@ public class TestShader implements Shader {
     // uniform locs
     private int u_projViewTrans;
     private int u_worldTrans;
-    private int u_color;
+//    private int u_color;
+    private int u_colorU;
+    private int u_colorV;
 
     // right after shader creation
     @Override
@@ -35,7 +37,8 @@ public class TestShader implements Shader {
 
         u_projViewTrans =  program.getUniformLocation("u_projViewTrans");
         u_worldTrans = program.getUniformLocation("u_worldTrans");
-        u_color = program.getUniformLocation("u_color");
+        u_colorU = program.getUniformLocation("u_colorU");
+        u_colorV = program.getUniformLocation("u_colorV");
     }
     @Override
     public void dispose() {
@@ -64,9 +67,11 @@ public class TestShader implements Shader {
         // this fails if the colorattr doesnt have a diffuse -- in that case we can get the
         // attr first and then do an if to fallback to a color (or another shader)
         // or (see canRendeR())
-        Color color = ((ColorAttribute)renderable.material.get(ColorAttribute.Diffuse)).color;
+        Color colorU = ((ColorAttribute)renderable.material.get(ColorAttribute.Diffuse)).color;
+        Color colorV = Color.BLUE;
 
-        program.setUniformf(u_color, color.r, color.g, color.b);
+        program.setUniformf(u_colorU, colorU.r, colorU.g, colorU.b);
+        program.setUniformf(u_colorV, colorV.r, colorV.g, colorV.b);
         // set attributes, bind and render
         renderable.meshPart.render(program);
     }
