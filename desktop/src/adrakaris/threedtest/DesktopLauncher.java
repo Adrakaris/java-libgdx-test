@@ -15,6 +15,6 @@ public class DesktopLauncher {
 //		config.setForegroundFPS(0); // Setting to 0 disables foreground fps throttling
 //		config.setIdleFPS(0); // Setting to 0 disables background fps throttling
 		//
-		new Lwjgl3Application(new SceneBlocksThing(), config);
+		new Lwjgl3Application(new InteractionSpaceScene(), config);
 	}
 }
