@@ -10,6 +10,11 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setForegroundFPS(60);
 		config.setTitle("3DTestGame");
-		new Lwjgl3Application(new ShaderThing(), config);
+		// disable vsync
+//		config.useVsync(false);
+//		config.setForegroundFPS(0); // Setting to 0 disables foreground fps throttling
+//		config.setIdleFPS(0); // Setting to 0 disables background fps throttling
+		//
+		new Lwjgl3Application(new SceneBlocksThing(), config);
 	}
 }
