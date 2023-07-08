@@ -1,6 +1,8 @@
 package adrakaris.threedtest;
 
 import adrakaris.threedtest.fings.GameObject;
+import adrakaris.threedtest.fings.collisionshape.BlockShape;
+import adrakaris.threedtest.fings.collisionshape.DiscShape;
 import adrakaris.threedtest.fings.collisionshape.Shape;
 import adrakaris.threedtest.fings.collisionshape.SphereShape;
 import com.badlogic.gdx.ApplicationListener;
@@ -114,7 +116,7 @@ public class InteractionSpaceScene extends InputAdapter implements ApplicationLi
             GameObject block = new GameObject(model, "block", true);
             block.transform.setToTranslation(x, 0, 3);
             if (blockShape == null) {
-                blockShape = new SphereShape(block.calculateBoundingBox(bounds));
+                blockShape = new BlockShape(block.calculateBoundingBox(bounds));
             }
             block.shape = blockShape;
             instances.add(block);
@@ -126,7 +128,7 @@ public class InteractionSpaceScene extends InputAdapter implements ApplicationLi
                 GameObject invader = new GameObject(model, "invader", true);
                 invader.transform.setToTranslation(x,0,z);
                 if (invaderShape == null) {
-                    invaderShape = new SphereShape(invader.calculateBoundingBox(bounds));
+                    invaderShape = new DiscShape(invader.calculateBoundingBox(bounds));
                 }
                 invader.shape = invaderShape;
                 instances.add(invader);
