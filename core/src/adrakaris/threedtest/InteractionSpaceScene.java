@@ -1,6 +1,8 @@
 package adrakaris.threedtest;
 
 import adrakaris.threedtest.fings.GameObject;
+import adrakaris.threedtest.fings.collisionshape.Shape;
+import adrakaris.threedtest.fings.collisionshape.SphereShape;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
@@ -18,6 +20,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -41,6 +44,10 @@ public class InteractionSpaceScene extends InputAdapter implements ApplicationLi
     public GameObject ship;
     public GameObject space;
 
+    protected Shape blockShape;
+    protected Shape invaderShape;
+    protected Shape shipShape;
+
     public Stage stage;
     public Label label;
     public BitmapFont font;
@@ -48,6 +55,8 @@ public class InteractionSpaceScene extends InputAdapter implements ApplicationLi
 
     private int visibleCount;
     private Vector3 position = new Vector3();
+
+    private BoundingBox bounds = new BoundingBox();
 
     // selected: INDEX of model instance that is selected
     // selecting: INDEX of model instance that is currently being selected
@@ -94,13 +103,20 @@ public class InteractionSpaceScene extends InputAdapter implements ApplicationLi
 
     private void doLoading() {
         Model model = assetManager.get("space/invaders.g3db", Model.class);
+
         ship = new GameObject(model, "ship", true);  // bruh moment
         ship.transform.setToRotation(Vector3.Y, 180).setTranslation(0,0,6);
+        shipShape = new SphereShape(ship.calculateBoundingBox(bounds));
+        ship.shape = shipShape;
         instances.add(ship);
 
         for (float x = -5; x <= 5; x += 2) {
             GameObject block = new GameObject(model, "block", true);
             block.transform.setToTranslation(x, 0, 3);
+            if (blockShape == null) {
+                blockShape = new SphereShape(block.calculateBoundingBox(bounds));
+            }
+            block.shape = blockShape;
             instances.add(block);
             blocks.add(block);
         }
@@ -109,6 +125,10 @@ public class InteractionSpaceScene extends InputAdapter implements ApplicationLi
             for (float z = -8; z <= 0; z += 2) {
                 GameObject invader = new GameObject(model, "invader", true);
                 invader.transform.setToTranslation(x,0,z);
+                if (invaderShape == null) {
+                    invaderShape = new SphereShape(invader.calculateBoundingBox(bounds));
+                }
+                invader.shape = invaderShape;
                 instances.add(invader);
                 invaders.add(invader);
             }
