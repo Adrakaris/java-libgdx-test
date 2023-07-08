@@ -63,6 +63,16 @@ public class BulletTest implements ApplicationListener {
         }
     }
 
+    // to optimise bullet we can use an event listen paradigm to make the thing less slow
+    class MyContactListener extends ContactListener {
+        @Override
+        public boolean onContactAdded(btManifoldPoint cp, btCollisionObjectWrapper colObj0Wrap, int partId0, int index0, btCollisionObjectWrapper colObj1Wrap, int partId1, int index1) {
+            instances.get(colObj0Wrap.getCollisionObject().getUserValue()).moving = false;
+            instances.get(colObj1Wrap.getCollisionObject().getUserValue()).moving = false;
+            return true;
+        }
+    }
+
     PerspectiveCamera camera;
     CameraInputController camController;
 
@@ -77,6 +87,7 @@ public class BulletTest implements ApplicationListener {
     // bullet
     btCollisionConfiguration collisionConfig;
     btDispatcher dispatcher;
+    MyContactListener contactListener;
 
     // render-used attrs
     float spawnTimer;
@@ -88,6 +99,7 @@ public class BulletTest implements ApplicationListener {
         // bullet helper classes
         collisionConfig = new btDefaultCollisionConfiguration();
         dispatcher = new btCollisionDispatcher(collisionConfig);
+        contactListener = new MyContactListener();
 
         // initialise required objects
         modelBatch = new ModelBatch();
@@ -106,7 +118,7 @@ public class BulletTest implements ApplicationListener {
 
         instances = new Array<>();
 
-        // initialise some models to use as example
+        // region modelbuilder: initialise some models to use as example
         ModelBuilder mb = new ModelBuilder();
         MeshPartBuilder mpb;  // temporary reassigned variable
 
@@ -130,7 +142,7 @@ public class BulletTest implements ApplicationListener {
         mpb = mb.part("cylinder", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal, new Material(ColorAttribute.createDiffuse(Color.MAGENTA)));
         CylinderShapeBuilder.build(mpb, 1, 2, 1, 12);
         model = mb.end();
-        // end modelbuilder
+        // endregion modelbuilder
 
         constructors = new ArrayMap<>(String.class, GameObject.Constructor.class);
         constructors.put("ground", new GameObject.Constructor(model, "ground", new btBoxShape(new Vector3(2.5f, 0.5f, 2.5f))));
@@ -150,6 +162,7 @@ public class BulletTest implements ApplicationListener {
         obj.transform.setFromEulerAngles(MathUtils.random(360f), MathUtils.random(360f), MathUtils.random(360f));
         obj.transform.trn(MathUtils.random(-2.5f, 2.5f), 9f, MathUtils.random(-2.5f, 2.5f));
         obj.body.setWorldTransform(obj.transform);
+        obj.body.setUserValue(instances.size);
         instances.add(obj);
 
     }
@@ -163,10 +176,12 @@ public class BulletTest implements ApplicationListener {
             if (obj.moving) {
                 obj.transform.trn(0, -delta, 0);
                 obj.body.setWorldTransform(obj.transform);
-                if (checkCollision(obj.body, instances.get(0).body)) {
-                    obj.moving = false;
-                }
+//                if (checkCollision(obj.body, instances.get(0).body)) {
+//                    obj.moving = false;
+//                }
+                checkCollision(obj.body, instances.get(0).body);
             }
+
         }
 
         if ((spawnTimer -= delta) < 0) {
@@ -232,6 +247,7 @@ public class BulletTest implements ApplicationListener {
         // note since bullet is originally a c++ api you have to manually free every thing you create.
         dispatcher.dispose();
         collisionConfig.dispose();
+        contactListener.dispose();
 
     }
 
