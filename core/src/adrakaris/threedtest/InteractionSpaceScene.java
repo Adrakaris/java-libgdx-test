@@ -1,22 +1,23 @@
 package adrakaris.threedtest;
 
+import adrakaris.threedtest.fings.GameObject;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g3d.*;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
-import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -24,21 +25,6 @@ import com.badlogic.gdx.utils.Array;
 
 public class InteractionSpaceScene extends InputAdapter implements ApplicationListener {
     // extend inputadapter to allow input control
-    public static class GameObject extends ModelInstance {
-        public final Vector3 center = new Vector3();
-        public final Vector3 dimensions = new Vector3();
-        public final float radius;  // sphere bounding box
-
-        private final static BoundingBox bounds = new BoundingBox();
-
-        public GameObject(Model model, String rootNode, boolean mergeTransform) {
-            super(model, rootNode, mergeTransform);
-            calculateBoundingBox(bounds);
-            bounds.getCenter(center);
-            bounds.getDimensions(dimensions);
-            radius = dimensions.len() / 2f;
-        }
-    }
 
 
     public PerspectiveCamera camera;
@@ -148,7 +134,7 @@ public class InteractionSpaceScene extends InputAdapter implements ApplicationLi
         modelBatch.begin(camera);
         visibleCount = 0;
         for (final GameObject instance : instances) {
-            if (isVisible(camera, instance)) {
+            if (instance.isVisible(camera)) {
                 modelBatch.render(instance, environment);
                 visibleCount++;
             }
@@ -164,12 +150,6 @@ public class InteractionSpaceScene extends InputAdapter implements ApplicationLi
         sb.append(" Selected: ").append(selected);
         label.setText(sb);
         stage.draw();
-    }
-
-    private boolean isVisible(final Camera camera, final GameObject instance) {
-        instance.transform.getTranslation(position);
-        position.add(instance.center);
-        return camera.frustum.sphereInFrustum(position, instance.radius);
     }
 
     // ===================================================================================
@@ -188,49 +168,17 @@ public class InteractionSpaceScene extends InputAdapter implements ApplicationLi
     private int getObject(int screenX, int screenY) {
         Ray ray = camera.getPickRay(screenX, screenY);
         int result = -1;  // current object closest to cmra
-        float distance = -1;  // distance from that object to camera
+        float prevDistance = -1;  // prevDistance from that object to camera
         // need to check for each object colliding with the ray pick the closest object and do that.
 
         // I don't particulalry like how he does that with index tracking vs actual object reference tracking but
         /// there we go
         for (int i = 0; i < instances.size; i++) {
-            final GameObject instance = instances.get(i);
-
-            instance.transform.getTranslation(position);
-            position.add(instance.center);
-
-
-            // get the closest obstacle by distance to its centre
-            final float len = ray.direction.dot(
-                    position.x - ray.origin.x,
-                    position.y - ray.origin.y,
-                    position.z - ray.origin.z
-            );
-            if (len < 0) { continue; }
-
-            float distSq = position.dst2(
-                    ray.origin.x + ray.direction.x * len,
-                    ray.origin.y + ray.direction.y * len,
-                    ray.origin.z + ray.direction.z * len
-            );
-            if (distance >= 0 && distSq > distance) {
-                continue;
-            }
-            if (distSq <= instance.radius * instance.radius) {
+            final float currentDistanceSq = instances.get(i).intersects(ray);
+            if (currentDistanceSq >= 0 && (prevDistance < 0 || currentDistanceSq <= prevDistance)) {
                 result = i;
-                distance = distSq;
+                prevDistance = currentDistanceSq;
             }
-
-            //region doing the same thing using circle bounding box
-//            float dist2 = ray.origin.dst2(position);  // use squared distance (since only need comparison)
-//            if (distance >= 0 && dist2 > distance) {
-//                continue;
-//            }
-//            if (Intersector.intersectRaySphere(ray, position, instance.radius, null)) {
-//                result = i;
-//                distance = dist2;
-//            }
-            //endregion
         }
         return result;
     }
