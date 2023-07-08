@@ -73,8 +73,6 @@ public class BulletTest implements ApplicationListener {
     ArrayMap<String, GameObject.Constructor> constructors;
 
     Model model;
-//    GameObject ground;
-//    GameObject ball;
 
     // bullet
     btCollisionConfiguration collisionConfig;
@@ -82,11 +80,6 @@ public class BulletTest implements ApplicationListener {
 
     // render-used attrs
     float spawnTimer;
-//    boolean collision;
-//    btCollisionShape groundShape;
-//    btCollisionShape ballShape;
-//    btCollisionObject groundObject;
-//    btCollisionObject ballObject;
 
     @Override
     public void create() {
@@ -147,28 +140,6 @@ public class BulletTest implements ApplicationListener {
         constructors.put("capsule", new GameObject.Constructor(model, "capsule", new btCapsuleShape(.5f, 1f)));
         constructors.put("cylinder", new GameObject.Constructor(model, "cylinder", new btCylinderShape(new Vector3(.5f, 1f, .5f))));
 
-
-//        ground = new ModelInstance(model, "ground");
-//        ball = new ModelInstance(model, "ball");
-//        ball.transform.setToTranslation(0,9,0);
-
-
-
-        // add collision
-//        ballShape = new btSphereShape(.5f);
-//        groundShape = new btBoxShape(new Vector3(2.5f, .5f, 2.5f));
-//
-//        groundObject = new btCollisionObject();
-//        groundObject.setCollisionShape(groundShape);
-//        groundObject.setWorldTransform(ground.transform);
-//        ballObject = new btCollisionObject();
-//        ballObject.setCollisionShape(ballShape);
-//        ballObject.setWorldTransform(ball.transform);
-
-        // add model to instance
-//        instances.add(ground);
-//        instances.add(ball);
-
         instances.add(constructors.get("ground").construct());
     }
 
@@ -203,13 +174,6 @@ public class BulletTest implements ApplicationListener {
             spawnTimer = 1.5f;
         }
 
-//        if (!collision) {
-//            ball.transform.translate(0, -3*delta, 0);
-//            ballObject.setWorldTransform(ball.transform);
-//
-//            collision = checkCollision();
-//        }
-
         // render
         camController.update();
 
@@ -226,9 +190,6 @@ public class BulletTest implements ApplicationListener {
         CollisionObjectWrapper cow1 = new CollisionObjectWrapper(obj1);
         CollisionObjectWrapper cow2 = new CollisionObjectWrapper(obj2);
 
-//        btCollisionAlgorithmConstructionInfo constrInfo = new btCollisionAlgorithmConstructionInfo();
-//        constrInfo.setDispatcher1(dispatcher);
-//        btCollisionAlgorithm algorithm = new btSphereBoxCollisionAlgorithm(null, constrInfo, cow1.wrapper, cow2.wrapper, false);
         // its masochistic to create an algorithm for every possible combination, so dispacher does it for us
         btCollisionAlgorithm algorithm = dispatcher.findAlgorithm(cow1.wrapper, cow2.wrapper, new btPersistentManifold(), BT_CLOSEST_POINT_ALGORITHMS);
 
@@ -269,10 +230,6 @@ public class BulletTest implements ApplicationListener {
 
         // bullet
         // note since bullet is originally a c++ api you have to manually free every thing you create.
-//        groundObject.dispose();
-//        groundShape.dispose();
-//        ballObject.dispose();
-//        ballShape.dispose();
         dispatcher.dispose();
         collisionConfig.dispose();
 
